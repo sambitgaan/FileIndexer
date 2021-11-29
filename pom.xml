@@ -6,7 +6,7 @@
 	<artifactId>RB-Purge-1.0</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>RB-Purge</name>
-	<description>CARE Purge Routine </description>
+	<description>CARE Purge Routine</description>
 
 	<properties>
 		<maven.compiler.source>11</maven.compiler.source>
