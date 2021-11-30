@@ -14,16 +14,9 @@ public class GetPurgeProperties {
 	private String indexDirectory;
 	private String dataDirectory;
 	private Properties prop;
-	// private String inputFile;
-	// private String searchedFile;
-	
 	public String getPropValues() throws IOException {
 		try {
 			Properties prop = new Properties();
-			/*
-			 * String propFileName = "config.properties"; inputStream =
-			 * getClass().getClassLoader().getResourceAsStream(propFileName);
-			 */
 			File configFile = new File("classes\\config.properties"); FileInputStream
 			inputStream = new FileInputStream(configFile);
 			prop.load(inputStream);
@@ -54,10 +47,6 @@ public class GetPurgeProperties {
 
 	public void setProp() throws IOException {
 		prop = new Properties();
-		/*
-		 * String propFileName = "config.properties"; inputStream =
-		 * getClass().getClassLoader().getResourceAsStream(propFileName);
-		 */
 		File configFile = new File("classes\\config.properties"); inputStream = new
 		FileInputStream(configFile);
 		if (inputStream != null) {
@@ -65,7 +54,6 @@ public class GetPurgeProperties {
 		} else {
 			throw new FileNotFoundException("property file: config.properties " + "not found in the classpath");
 		}
-		// this.prop = prop;
 	}
 
 	public String getInputFile() {

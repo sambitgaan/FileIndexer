@@ -12,7 +12,6 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.lucene.analysis.Analyzer;

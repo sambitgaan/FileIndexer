@@ -1,9 +1,6 @@
 package rb.com.care.purge;
 
 public class Keyin {
-	//*******************************
-	//   support methods
-	//*******************************
 	//Method to display the user's prompt string
 	public static void printPrompt(String prompt) {
 		System.out.print(prompt + " ");
@@ -11,7 +8,6 @@ public class Keyin {
 	}
 
 	//Method to make sure no data is available in the
-	//input stream
 	public static void inputFlush() {
 		int dummy;
 		int bAvail;
