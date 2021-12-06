@@ -14,6 +14,7 @@ public class GetPurgeProperties {
 	private String indexDirectory;
 	private String dataDirectory;
 	private Properties prop;
+
 	public String getPropValues() throws IOException {
 		try {
 			Properties prop = new Properties();
@@ -32,7 +33,7 @@ public class GetPurgeProperties {
 		}
 		return result;
 	}
-	
+
 	public String getDataDirectory() {
 		return prop.getProperty("FILES_TO_INDEX_DIRECTORY");
 	}
@@ -63,7 +64,7 @@ public class GetPurgeProperties {
 	public String getSearchedFile() {
 		return prop.getProperty("SEARCHED_FILES");
 	}
-	
+
 	public String getDeleteLogFile() {
 		return prop.getProperty("DELETE_LOG");
 	}
