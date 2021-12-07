@@ -36,7 +36,7 @@ public class GetPurgePropertiesTest {
 
     @Test
     public void getDataDirectory() {
-        assertEquals("purgeData", properties.getDataDirectory());
+        assertEquals("Test", properties.getDataDirectory());
     }
 
     @Test
@@ -52,5 +52,11 @@ public class GetPurgePropertiesTest {
     @Test
     public void getDeleteLogFile() {
         assertEquals("target\\classes\\Input\\List.txt", properties.getDeleteLogFile());
+    }
+
+    @Test
+    public void testGetProp() throws IOException{
+        String result = properties.getPropValues();
+        assertEquals("Directory Paths = Test, IndexDir", result);
     }
 }
