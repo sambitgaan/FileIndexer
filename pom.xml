@@ -14,6 +14,9 @@
 		<lucene.version>8.9.0</lucene.version>
 		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
 		<lucene-queryparser.version>8.9.0</lucene-queryparser.version>
+		<guava.version>31.0.1-jre</guava.version>
+		<junit.version>4.13.2</junit.version>
+		<mockito.version>2.0.1-beta</mockito.version>
 	</properties>
 
 	<dependencies>
@@ -26,6 +29,22 @@
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-queryparser</artifactId>
 			<version>${lucene-queryparser.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${guava.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>${mockito.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

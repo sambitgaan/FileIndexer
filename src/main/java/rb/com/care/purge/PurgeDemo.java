@@ -1,19 +1,18 @@
 package rb.com.care.purge;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.google.common.collect.Lists;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -37,9 +36,10 @@ import org.apache.lucene.store.LockObtainFailedException;
 public class PurgeDemo {
 
 	static GetPurgeProperties properties;
-	private static AtomicInteger threadsInWritingBlock = new AtomicInteger();
-    private static AtomicInteger pendingCommits = new AtomicInteger();
-    private static int PENDING_COMMIT_THRESHOLD = 1000;
+
+	public static AtomicInteger threadsInWritingBlock = new AtomicInteger();
+	public static AtomicInteger pendingCommits = new AtomicInteger();
+	public static int PENDING_COMMIT_THRESHOLD = 1000;
     
 	public static void main(String[] args) throws Exception {
 		
@@ -97,7 +97,7 @@ public class PurgeDemo {
 		System.out.println("Time taken for searching: " + timeElapsedSearch.getSeconds());
 	}
 
-	private static void startIndex() throws IOException, FileNotFoundException, CorruptIndexException,
+	public static void startIndex() throws IOException, FileNotFoundException, CorruptIndexException,
 			LockObtainFailedException, ParseException {
 		System.out.println("Indexing has been started, please wait ...");
 		Instant start = Instant.now();
@@ -149,12 +149,12 @@ public class PurgeDemo {
 	public static void createIndex(BufferedReader br) throws CorruptIndexException, LockObtainFailedException, IOException, ParseException {
 		File dataDirectory = new File(properties.getDataDirectory());
 		IndexWriter iw = getIndexWriter(properties.getIndexDirectory());
-		indexDirectory(iw, dataDirectory);
+		threadIndexDirectory(iw, dataDirectory);
 		iw.commit();
 		iw.close();
 	}
 
-	private static BufferedReader getFIleBufferedReader() throws FileNotFoundException {
+	public static BufferedReader getFIleBufferedReader() throws IOException {
 		File file = new File(properties.getInputFile());
 		BufferedReader br = new BufferedReader(new FileReader(file));
 		return br;
@@ -180,21 +180,46 @@ public class PurgeDemo {
 
 	private static void indexDirectory(IndexWriter iw, File dataDirectory) throws IOException, ParseException {
 		File[] files = dataDirectory.listFiles();
-        for (int i = 0; i < files.length; i++) {
-            File f = files[i];
-            if (f.isDirectory()) {
-                indexDirectory(iw, f);
-            }
-            else {
-                indexFileWithIndexWriter(iw, f);
-            }
-        }
+		for (int i = 0; i < files.length; i++) {
+			File f = files[i];
+			if (f.isDirectory()) {
+					indexDirectory(iw, f);
+			} else {
+				indexFileWithIndexWriter(iw, f);
+			}
+		}
+	}
+
+
+	//Thread aproch
+	private static void threadIndexDirectory(IndexWriter iw, File dataDirectory) throws IOException, ParseException {
+		File[] files = dataDirectory.listFiles();
+		List<File> listFIles = Arrays.asList(files);
+		int chunkSize = (int) Math.ceil((double) files.length / 10);
+		List<List<File>> checkedData = Lists.partition(listFIles, chunkSize); //List of list of files 1425/10 --> 142
+
+		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
+		// executor
+//		for (int i = 0; i < checkedData.size(); i++) {
+//			executor.submit(new IndexingExecutor(checkedData.get(i), i));
+//		}
+
+		// thread approch
+		for (int i = 0; i < checkedData.size(); i++) {
+			executor.submit(new Indexing(iw, checkedData.get(i), i));
+		}
+		executor.shutdown();
+		while (!executor.isTerminated()) {}
+
+
+		//Merge Schduler
+		ConcurrentMergeScheduler.mergeScheduler(new Object());
 	}
 
 	private static void indexFileWithIndexWriter(IndexWriter iw, File f) throws IOException, ParseException {
 		if (f.isHidden() || f.isDirectory() || !f.canRead() || !f.exists()) {
-            return;
-        }       
+			return;
+        }
         Document doc = new Document();
         addToIndex(iw, f, doc);
 	}
